@@ -3,6 +3,7 @@ import Particles from 'react-particles-js';
 import Clarifai from 'clarifai';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition';
 import Navigation from './components/Navigation/Navigation';
+import Signin from './components/Signin/Signin';
 import Logo from './components/Logo/Logo';
 import Rank from './components/Rank/Rank';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
@@ -33,6 +34,7 @@ class App extends Component {
     this.state = {
       input: '',
       imageUrl: '',
+      route: 'signin',  // this route state keeps track of where we are in the app. and its set to signin initially
       box: {},  // this box state is a simple object that'll hold the bounding psoitions being returned by the api. and its set to empty initially
     }
   }
@@ -66,17 +68,26 @@ class App extends Component {
       .catch(error => console.log(error));
   }
 
+  onRouteChange = (route) => {
+    this.setState({route});
+  }
+
   render() {
     return (
       <div className='App'>
         <Particles className='particles'
           params={ particlesOptions }
         />
-        <Navigation />
-        <Logo />
-        <Rank />
-        <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
-        <FaceRecognition imageUrl={this.state.imageUrl} box={this.state.box} />
+        <Navigation onRouteChange={this.onRouteChange} />
+        { this.state.route === 'signin' 
+          ? <Signin onRouteChange={this.onRouteChange} />
+          : <div> {/* notice how we had to wrap the else part of the ternary in a div, because in JSX, only one thing can be returned*/}
+            <Logo />
+            <Rank />
+            <ImageLinkForm onInputChange={this.onInputChange} onButtonSubmit={this.onButtonSubmit} />
+            <FaceRecognition imageUrl={this.state.imageUrl} box={this.state.box} />
+          </div>
+        }
       </div>
     );
   }
