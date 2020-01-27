@@ -29,23 +29,24 @@ const particlesOptions = {
   }
 }
 
+const initialState = {
+  input: '',
+  imageUrl: '',
+  isSignedIn: false,
+  user: { // this is a default user state set to mostly empty values, but will be updated later on registering
+    id: '',
+    name: '',
+    email: '',
+    entries: 0,
+    joined: ''
+  },
+  route: 'signin',  // this route state keeps track of where we are in the app. and its set to signin initially
+  box: {},  // this box state is a simple object that'll hold the bounding psoitions being returned by the api. and its set to empty initially
+}
 class App extends Component {
   constructor () {
     super();
-    this.state = {
-      input: '',
-      imageUrl: '',
-      isSignedIn: false,
-      user: { // this is a default user state set to mostly empty values, but will be updated later on registering
-        id: '',
-        name: '',
-        email: '',
-        entries: 0,
-        joined: ''
-      },
-      route: 'signin',  // this route state keeps track of where we are in the app. and its set to signin initially
-      box: {},  // this box state is a simple object that'll hold the bounding psoitions being returned by the api. and its set to empty initially
-    }
+    this.state = initialState;
   }
 
   loadUser = (data) => {
@@ -95,6 +96,7 @@ class App extends Component {
           .then(count => {
             this.setState(Object.assign(this.state.user, { entries: count }));
           })
+          .catch(err => console.log(err));
         }
         this.displayFaceBox(this.calculateFaceLocation(response))
       })
@@ -103,7 +105,7 @@ class App extends Component {
 
   onRouteChange = (route) => {
     if (route === 'signout') {
-      this.setState({isSignedIn: false});
+      this.setState(initialState);
     } else if(route === 'home') {
       this.setState({isSignedIn: true});
     }
